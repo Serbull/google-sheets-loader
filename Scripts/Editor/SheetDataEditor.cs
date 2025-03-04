@@ -1,3 +1,4 @@
+using System.Globalization;
 using UnityEditor;
 using UnityEngine;
 
@@ -63,13 +64,13 @@ namespace GoogleSheets
                     GUIStyle style = new();
                     style.normal.textColor = _lastFetchSuccessful.boolValue ? Color.green : Color.red;
                     style.alignment = TextAnchor.MiddleCenter;
-                    System.TimeSpan ts = System.DateTime.UtcNow - System.DateTime.Parse(_lastFetchTime.stringValue);
+                    System.TimeSpan ts = System.DateTime.UtcNow - System.DateTime.Parse(_lastFetchTime.stringValue, CultureInfo.InvariantCulture);
                     string text;
                     if (ts.TotalSeconds < 10) text = "just now";
                     else if (ts.TotalSeconds < 60) text = $"{ts.TotalSeconds:0} seconds ago";
                     else if (ts.TotalMinutes < 60) text = $"{ts.TotalMinutes:0} minutes ago";
                     else if (ts.TotalHours < 24) text = $"{ts.TotalHours:0} hours ago";
-                    else text = System.DateTime.Parse(_lastFetchTime.stringValue).Date.ToString();
+                    else text = System.DateTime.Parse(_lastFetchTime.stringValue, CultureInfo.InvariantCulture).Date.ToString();
                     GUILayout.Label($"Last fetch {text}", style);
                 }
             }
