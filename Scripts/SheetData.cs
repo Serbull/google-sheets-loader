@@ -26,7 +26,7 @@ namespace GoogleSheets
         private void OnDownloadSuccess(string data)
         {
             Debug.Log($"Download successful for '{name}'");
-            _lastFetchTime = System.DateTime.UtcNow.ToString();
+            _lastFetchTime = System.DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss");
 
             try
             {

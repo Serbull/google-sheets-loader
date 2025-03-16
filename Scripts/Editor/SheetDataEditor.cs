@@ -64,7 +64,7 @@ namespace GoogleSheets
                     GUIStyle style = new();
                     style.normal.textColor = _lastFetchSuccessful.boolValue ? Color.green : Color.red;
                     style.alignment = TextAnchor.MiddleCenter;
-                    var time = System.DateTime.Parse(_lastFetchTime.stringValue, CultureInfo.InvariantCulture);
+                    var time = System.DateTime.ParseExact(_lastFetchTime.stringValue, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                     System.TimeSpan ts = System.DateTime.UtcNow - time;
                     string text;
                     if (ts.TotalSeconds < 10) text = "just now";
