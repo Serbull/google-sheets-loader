@@ -64,15 +64,17 @@ namespace GoogleSheets
                     GUIStyle style = new();
                     style.normal.textColor = _lastFetchSuccessful.boolValue ? Color.green : Color.red;
                     style.alignment = TextAnchor.MiddleCenter;
-                    var time = System.DateTime.ParseExact(_lastFetchTime.stringValue, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                    System.TimeSpan ts = System.DateTime.UtcNow - time;
-                    string text;
-                    if (ts.TotalSeconds < 10) text = "just now";
-                    else if (ts.TotalSeconds < 60) text = $"{ts.TotalSeconds:0} seconds ago";
-                    else if (ts.TotalMinutes < 60) text = $"{ts.TotalMinutes:0} minutes ago";
-                    else if (ts.TotalHours < 24) text = $"{ts.TotalHours:0} hours ago";
-                    else text = time.Date.ToString();
-                    GUILayout.Label($"Last fetch {text}", style);
+                    if (System.DateTime.TryParseExact(_lastFetchTime.stringValue, "yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out System.DateTime time))
+                    {
+                        System.TimeSpan ts = System.DateTime.UtcNow - time;
+                        string text;
+                        if (ts.TotalSeconds < 10) text = "just now";
+                        else if (ts.TotalSeconds < 60) text = $"{ts.TotalSeconds:0} seconds ago";
+                        else if (ts.TotalMinutes < 60) text = $"{ts.TotalMinutes:0} minutes ago";
+                        else if (ts.TotalHours < 24) text = $"{ts.TotalHours:0} hours ago";
+                        else text = time.Date.ToString();
+                        GUILayout.Label($"Last fetch {text}", style);
+                    }
                 }
             }
 
