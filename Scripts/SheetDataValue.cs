@@ -15,7 +15,7 @@ namespace GoogleSheets.Values
 
         public Vector2Int FindKey(string key, bool errorIfNotFound = true)
         {
-            return FindKey(key, Vector2Int.zero, int.MaxValue * Vector2Int.one, errorIfNotFound);
+            return FindKey(key, Vector2Int.zero, Vector2Int.one * int.MaxValue, errorIfNotFound);
         }
 
         public Vector2Int FindKey(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool errorIfNotFound = true)
