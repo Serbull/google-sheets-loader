@@ -143,7 +143,12 @@ namespace GoogleSheets.Values
 
         public new T[] GetArrayVertical(string key, bool breakOnNull = true)
         {
-            var cells = base.GetArrayVertical(key, breakOnNull);
+            return GetArrayVertical(FindKey(key), breakOnNull);
+        }
+
+        public new T[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
+        {
+            var cells = base.GetArrayVertical(startCell, breakOnNull);
             var result = new T[cells.Length];
 
             for (int i = 0; i < result.Length; i++)
