@@ -146,6 +146,11 @@ namespace GoogleSheets.Values
             return GetArrayVertical(FindKey(key), breakOnNull);
         }
 
+        public T[] GetArrayVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool breakOnNull = true)
+        {
+            return GetArrayVertical(FindKey(key, rangeMin, rangeMax), breakOnNull);
+        }
+
         public new T[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
         {
             var cells = base.GetArrayVertical(startCell, breakOnNull);
