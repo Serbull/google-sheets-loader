@@ -99,6 +99,32 @@ namespace GoogleSheets.Values
 
             return result.ToArray();
         }
+
+        public Vector2Int[] GetArrayHorizontal(string key, bool breakOnNull = true)
+        {
+            return GetArrayHorizontal(FindKey(key), breakOnNull);
+        }
+
+        public Vector2Int[] GetArrayHorizontal(Vector2Int startCell, bool breakOnNull = true)
+        {
+            var result = new List<Vector2Int>();
+
+            for (int i = startCell.x + 1; i < _cells.GetUpperBound(0); i++)
+            {
+                string item = _cells[i, startCell.y];
+                if (string.IsNullOrEmpty(item))
+                {
+                    if (breakOnNull)
+                        break;
+                    else
+                        continue;
+                }
+
+                result.Add(new Vector2Int(i, startCell.y));
+            }
+
+            return result.ToArray();
+        }
     }
 
     public abstract class SheetDataValue<T>: SheetDataValue
@@ -121,6 +147,11 @@ namespace GoogleSheets.Values
 
         public abstract T Parse(string str);
 
+        public T GetValue(Vector2Int cell)
+        {
+            return Parse(_cells[cell.x, cell.y]);
+        }
+
         public T GetValueVertical(string key)
         {
             return GetValue(FindKey(key) + Vector2Int.up);
@@ -134,11 +165,6 @@ namespace GoogleSheets.Values
         public T GetValueHorizontal(string key, Vector2Int rangeMin, Vector2Int rangeMax)
         {
             return GetValue(FindKey(key, rangeMin, rangeMax) + Vector2Int.right);
-        }
-
-        public T GetValue(Vector2Int cell)
-        {
-            return Parse(_cells[cell.x, cell.y]);
         }
 
         public new T[] GetArrayVertical(string key, bool breakOnNull = true)
@@ -191,22 +217,20 @@ namespace GoogleSheets.Values
                 return null;
             }
 
-            var result = new List<T>();
-            for (int i = startCell.x + 1; i < _cells.GetUpperBound(0); i++)
-            {
-                string item = _cells[i, startCell.y];
-                if (string.IsNullOrEmpty(item))
-                {
-                    if (breakOnNull)
-                        break;
-                    else
-                        continue;
-                }
+            return GetArrayHorizontal(startCell, breakOnNull);
+        }
 
-                result.Add(Parse(item));
+        public new T[] GetArrayHorizontal(Vector2Int startCell, bool breakOnNull = true)
+        {
+            var cells = base.GetArrayHorizontal(startCell, breakOnNull);
+            var result = new T[cells.Length];
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = Parse(_cells[cells[i].x, cells[i].y]);
             }
 
-            return result.ToArray();
+            return result;
         }
 
         public T[] GetAllValuesHorizontal(string key)
