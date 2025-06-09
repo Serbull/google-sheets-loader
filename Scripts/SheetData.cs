@@ -33,9 +33,9 @@ namespace GoogleSheets
                 UpdateData(data);
                 _lastFetchSuccessful = true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception exception)
             {
-                Debug.LogError("Can`t apply data: " + ex.Message);
+                Debug.LogError(exception);
                 _lastFetchSuccessful = false;
             }
         }
