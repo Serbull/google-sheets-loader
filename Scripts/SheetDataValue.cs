@@ -81,9 +81,16 @@ namespace GoogleSheets.Values
 
         public Vector2Int[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
         {
+            return GetArrayVertical(startCell, new Vector2Int(int.MaxValue, int.MaxValue), breakOnNull);
+        }
+
+        public Vector2Int[] GetArrayVertical(Vector2Int startCell, Vector2Int endCell, bool breakOnNull = true)
+        {
             var result = new List<Vector2Int>();
 
-            for (int i = startCell.y + 1; i < _cells.GetUpperBound(1); i++)
+            endCell.y = Mathf.Min(endCell.y, _cells.GetUpperBound(1) - 1);
+
+            for (int i = startCell.y + 1; i <= endCell.y; i++)
             {
                 string item = _cells[startCell.x, i];
                 if (string.IsNullOrEmpty(item))
@@ -174,12 +181,17 @@ namespace GoogleSheets.Values
 
         public T[] GetArrayVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool breakOnNull = true)
         {
-            return GetArrayVertical(FindKey(key, rangeMin, rangeMax), breakOnNull);
+            return GetArrayVertical(FindKey(key, rangeMin, rangeMax), rangeMax, breakOnNull);
         }
 
         public new T[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
         {
-            var cells = base.GetArrayVertical(startCell, breakOnNull);
+            return GetArrayVertical(startCell, new Vector2Int(int.MaxValue, int.MaxValue), breakOnNull);
+        }
+
+        public new T[] GetArrayVertical(Vector2Int startCell, Vector2Int endCell, bool breakOnNull = true)
+        {
+            var cells = base.GetArrayVertical(startCell, endCell, breakOnNull);
             var result = new T[cells.Length];
 
             for (int i = 0; i < result.Length; i++)
