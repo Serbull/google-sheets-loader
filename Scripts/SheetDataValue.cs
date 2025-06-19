@@ -295,6 +295,29 @@ namespace GoogleSheets.Values
             return result;
         }
 
+        #region BLOCKS
+
+        /// <summary>
+        /// |      |  "HP"  |       | > one key
+        /// |______|________|_______|
+        /// |      |        |       | 
+        /// |______|________|_______|
+        /// |      |  100   |       | 
+        /// |______|________|_______| > 1st block
+        /// |      |  200   |       | 
+        /// |______|________|_______| 
+        /// |      |        |       | > empty field between blocks
+        /// |______|________|_______| 
+        /// |      |  350   |       |
+        /// |______|________|_______| > 2nd block
+        /// |      |  425   |       | 
+        /// |______|________|_______|
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="rangeMin"></param>
+        /// <param name="rangeMax"></param>
+        /// <param name="errorIfNotFoundKey"></param>
+        /// <returns></returns>
         public Block[] GetBlockArrayVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool errorIfNotFoundKey)
         {
             var cells = base.GetArrayVertical(FindKey(key, rangeMin, rangeMax, errorIfNotFoundKey), rangeMax.y, false);
@@ -324,6 +347,9 @@ namespace GoogleSheets.Values
 
             return result.ToArray();
         }
+
+        #endregion
+
     }
 
     public sealed class SheetDataInt : SheetDataValue<int>
