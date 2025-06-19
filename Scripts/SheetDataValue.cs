@@ -298,21 +298,13 @@ namespace GoogleSheets.Values
         #region BLOCKS
 
         /// <summary>
-        /// |      |  "HP"  |       | > one key
-        /// |______|________|_______|
-        /// |      |        |       | 
-        /// |______|________|_______|
-        /// |      |  100   |       | 
-        /// |______|________|_______| > 1st block
-        /// |      |  200   |       | 
-        /// |______|________|_______| 
-        /// |      |        |       | > empty field between blocks
-        /// |______|________|_______| 
-        /// |      |  350   |       |
-        /// |______|________|_______| > 2nd block
-        /// |      |  425   |       | 
-        /// |______|________|_______|
-        /// </summary>
+        /// <para>  |______|__HP__|______| > <b>one key</b>             </para>
+        /// <para>  |______|______|______| > empty field between blocks </para>
+        /// <para>  |______|__10__|______| > <b>1st block</b>           </para>
+        /// <para>  |______|__20__|______| > <b>1st block</b>           </para>
+        /// <para>  |______|______|______| > empty field between blocks </para>
+        /// <para>  |______|__30__|______| > <b>2nd block</b>           </para>
+        /// <para>  |______|__45__|______| > <b>2nd block</b>           </para>
         /// <param name="key"></param>
         /// <param name="rangeMin"></param>
         /// <param name="rangeMax"></param>
@@ -335,14 +327,16 @@ namespace GoogleSheets.Values
                     {
                         values.Add(GetValue(cells[y]));
                         blockLength++;
-                        continue;
                     }
-
-                    i += blockLength;
-                    break;
+                    else
+                    {
+                        break;
+                    }
                 }
 
-                result.Add(new Block(values.ToArray(), cells[i], cells[blockLength]));
+                result.Add(new Block(values.ToArray(), cells[i], cells[i + blockLength]));
+
+                i += blockLength;
             }
 
             return result.ToArray();
