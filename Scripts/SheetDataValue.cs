@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -298,13 +299,14 @@ namespace GoogleSheets.Values
         #region BLOCKS
 
         /// <summary>
-        /// <para>  |______|__HP__|______| > <b>one key</b>             </para>
-        /// <para>  |______|______|______| > empty field between blocks </para>
-        /// <para>  |______|__10__|______| > <b>1st block</b>           </para>
-        /// <para>  |______|__20__|______| > <b>1st block</b>           </para>
-        /// <para>  |______|______|______| > empty field between blocks </para>
-        /// <para>  |______|__30__|______| > <b>2nd block</b>           </para>
-        /// <para>  |______|__45__|______| > <b>2nd block</b>           </para>
+        /// <para>  |______|__HP__|______| > <b>one key for all values</b>  </para>
+        /// <para>  |______|______|______| > empty cell between blocks      </para>
+        /// <para>  |______|__10__|______| > <b>1st block</b>               </para>
+        /// <para>  |______|__20__|______| > <b>1st block</b>               </para>
+        /// <para>  |______|______|______| > empty cekk between blocks      </para>
+        /// <para>  |______|__30__|______| > <b>2nd block</b>               </para>
+        /// <para>  |______|__45__|______| > <b>2nd block</b>               </para>
+        /// </summary>
         /// <param name="key"></param>
         /// <param name="rangeMin"></param>
         /// <param name="rangeMax"></param>
@@ -334,7 +336,8 @@ namespace GoogleSheets.Values
                     }
                 }
 
-                result.Add(new Block(values.ToArray(), cells[i], cells[i + blockLength]));
+                var endIndex = Math.Min(i + blockLength - 1, cells.Length - 1);
+                result.Add(new Block(values.ToArray(), cells[i], cells[endIndex]));
 
                 i += blockLength;
             }
