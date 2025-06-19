@@ -184,6 +184,20 @@ namespace GoogleSheets.Values
             return GetValue(FindKey(key) + Vector2Int.up);
         }
 
+        public T GetValueVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool errorIfNotFoundKey)
+        {
+            var cell = FindKey(key, rangeMin, rangeMax, errorIfNotFoundKey);
+
+            if (cell != -Vector2Int.one)
+            {
+                return GetValue(cell + Vector2Int.up);
+            }
+            else
+            {
+                return default;
+            }
+        }
+
         public T GetValueHorizontal(string key)
         {
             return GetValue(FindKey(key) + Vector2Int.right);
