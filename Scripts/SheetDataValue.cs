@@ -76,21 +76,26 @@ namespace GoogleSheets.Values
 
         public Vector2Int[] GetArrayVertical(string key, bool breakOnNull = true)
         {
-            return GetArrayVertical(FindKey(key), breakOnNull);
+            return GetArrayVertical(FindKey(key), int.MaxValue, breakOnNull);
+        }
+
+        public Vector2Int[] GetArrayVertical(string key, int cellMaxY, bool breakOnNull = true)
+        {
+            return GetArrayVertical(FindKey(key), cellMaxY, breakOnNull);
         }
 
         public Vector2Int[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
         {
-            return GetArrayVertical(startCell, new Vector2Int(int.MaxValue, int.MaxValue), breakOnNull);
+            return GetArrayVertical(startCell, int.MaxValue, breakOnNull);
         }
 
-        public Vector2Int[] GetArrayVertical(Vector2Int startCell, Vector2Int endCell, bool breakOnNull = true)
+        public Vector2Int[] GetArrayVertical(Vector2Int startCell, int cellMaxY, bool breakOnNull = true)
         {
             var result = new List<Vector2Int>();
 
-            endCell.y = Mathf.Min(endCell.y, _cells.GetUpperBound(1) - 1);
+            cellMaxY = Mathf.Min(cellMaxY, _cells.GetUpperBound(1) - 1);
 
-            for (int i = startCell.y + 1; i <= endCell.y; i++)
+            for (int i = startCell.y + 1; i <= cellMaxY; i++)
             {
                 string item = _cells[startCell.x, i];
                 if (string.IsNullOrEmpty(item))
@@ -134,7 +139,7 @@ namespace GoogleSheets.Values
         }
     }
 
-    public abstract class SheetDataValue<T>: SheetDataValue
+    public abstract class SheetDataValue<T> : SheetDataValue
     {
         public struct RangeValue
         {
@@ -147,6 +152,20 @@ namespace GoogleSheets.Values
                 this.value = value;
                 this.startCell = startCell;
                 this.endCell = endCell;
+            }
+        }
+
+        public struct Block
+        {
+            public T[] Values;
+            public Vector2Int StartCell;
+            public Vector2Int EndCell;
+
+            public Block(T[] values, Vector2Int startCell, Vector2Int endCell)
+            {
+                Values = values;
+                StartCell = startCell;
+                EndCell = endCell;
             }
         }
 
@@ -174,6 +193,8 @@ namespace GoogleSheets.Values
             return GetValue(FindKey(key, rangeMin, rangeMax) + Vector2Int.right);
         }
 
+        #region ARRAY_VERTICAL
+
         public new T[] GetArrayVertical(string key, bool breakOnNull = true)
         {
             return GetArrayVertical(FindKey(key), breakOnNull);
@@ -181,17 +202,17 @@ namespace GoogleSheets.Values
 
         public T[] GetArrayVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool breakOnNull = true)
         {
-            return GetArrayVertical(FindKey(key, rangeMin, rangeMax), rangeMax, breakOnNull);
+            return GetArrayVertical(FindKey(key, rangeMin, rangeMax), rangeMax.y, breakOnNull);
         }
 
         public new T[] GetArrayVertical(Vector2Int startCell, bool breakOnNull = true)
         {
-            return GetArrayVertical(startCell, new Vector2Int(int.MaxValue, int.MaxValue), breakOnNull);
+            return GetArrayVertical(startCell, int.MaxValue, breakOnNull);
         }
 
-        public new T[] GetArrayVertical(Vector2Int startCell, Vector2Int endCell, bool breakOnNull = true)
+        public new T[] GetArrayVertical(Vector2Int startCell, int cellMaxY, bool breakOnNull = true)
         {
-            var cells = base.GetArrayVertical(startCell, endCell, breakOnNull);
+            var cells = base.GetArrayVertical(startCell, cellMaxY, breakOnNull);
             var result = new T[cells.Length];
 
             for (int i = 0; i < result.Length; i++)
@@ -202,19 +223,9 @@ namespace GoogleSheets.Values
             return result;
         }
 
-        public RangeValue[] GetRangeArrayVertical(string key)
-        {
-            var cells = base.GetArrayVertical(key, false);
-            var result = new RangeValue[cells.Length];
+        #endregion
 
-            for (int i = 0; i < result.Length; i++)
-            {
-                var endCell = i < result.Length - 1 ? cells[i + 1] - Vector2Int.up : new Vector2Int(cells[i].x, _cells.GetUpperBound(1) - 1);
-                result[i] = new(Parse(_cells[cells[i].x, cells[i].y]), cells[i], endCell);
-            }
-
-            return result;
-        }
+        #region ARRAY_HORIZONTAL
 
         public T[] GetArrayHorizontal(string key, bool breakOnNull = true, bool errorIfNotFoundKey = true)
         {
@@ -266,6 +277,52 @@ namespace GoogleSheets.Values
             }
 
             return result;
+        }
+
+        #endregion
+
+        public RangeValue[] GetRangeArrayVertical(string key)
+        {
+            var cells = base.GetArrayVertical(key, false);
+            var result = new RangeValue[cells.Length];
+
+            for (int i = 0; i < result.Length; i++)
+            {
+                var endCell = i < result.Length - 1 ? cells[i + 1] - Vector2Int.up : new Vector2Int(cells[i].x, _cells.GetUpperBound(1) - 1);
+                result[i] = new(Parse(_cells[cells[i].x, cells[i].y]), cells[i], endCell);
+            }
+
+            return result;
+        }
+
+        public Block[] GetBlockArrayVertical(string key, Vector2Int rangeMin, Vector2Int rangeMax, bool errorIfNotFoundKey)
+        {
+            var cells = base.GetArrayVertical(FindKey(key, rangeMin, rangeMax, errorIfNotFoundKey), rangeMax.y, false);
+
+            var result = new List<Block>();
+
+            for (int i = 0; i < cells.Length - 1;)
+            {
+                var blockLength = 1;
+                var values = new List<T>() { GetValue(cells[i]) };
+
+                for (int y = i + 1; y < cells.Length; y++)
+                {
+                    if (cells[y].y == cells[i].y + blockLength)
+                    {
+                        values.Add(GetValue(cells[y]));
+                        blockLength++;
+                        continue;
+                    }
+
+                    i += blockLength;
+                    break;
+                }
+
+                result.Add(new Block(values.ToArray(), cells[i], cells[blockLength]));
+            }
+
+            return result.ToArray();
         }
     }
 
