@@ -296,6 +296,8 @@ namespace GoogleSheets.Values
 
         #endregion
 
+        #region RANGE
+
         public RangeValue[] GetRangeArrayVertical(string key)
         {
             var cells = base.GetArrayVertical(key, false);
@@ -309,6 +311,8 @@ namespace GoogleSheets.Values
 
             return result;
         }
+
+        #endregion
 
         #region BLOCKS
 
@@ -332,7 +336,7 @@ namespace GoogleSheets.Values
 
             var result = new List<Block>();
 
-            for (int i = 0; i < cells.Length - 1;)
+            for (int i = 0; i < cells.Length;)
             {
                 var blockLength = 1;
                 var values = new List<T>() { GetValue(cells[i]) };
