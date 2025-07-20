@@ -375,7 +375,14 @@ namespace GoogleSheets.Values
         {
             str = str.Replace(" ", "");
 
-            return int.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
+            try
+            {
+                return int.Parse(str, NumberStyles.Integer, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                throw new Exception($"Cannot parse to INT: {str}");
+            }
         }
     }
 
@@ -387,7 +394,14 @@ namespace GoogleSheets.Values
         {
             str = str.Replace(" ", "").Replace(",", ".");
 
-            return float.Parse(str, NumberStyles.Float, CultureInfo.InvariantCulture);
+            try
+            {
+                return float.Parse(str, NumberStyles.Float, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                throw new Exception($"Cannot parse to FLOAT: {str}");
+            }
         }
     }
 
