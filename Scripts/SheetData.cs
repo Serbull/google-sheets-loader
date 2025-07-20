@@ -37,6 +37,7 @@ namespace GoogleSheets
             {
                 Debug.LogError(exception);
                 _lastFetchSuccessful = false;
+                HandleException(exception);
             }
         }
 
@@ -58,5 +59,7 @@ namespace GoogleSheets
         }
 
         protected abstract void UpdateSheetData();
+
+        protected virtual void HandleException(System.Exception ex) { }
     }
 }
